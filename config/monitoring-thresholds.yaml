@@ -1,0 +1,199 @@
+# Monitoring Thresholds and SLOs
+# Last Updated: 2026-03-19
+
+# Service Level Objectives (SLOs)
+slos:
+  availability:
+    target: 99.9  # 99.9% uptime
+    measurement_window: 30d
+
+  latency:
+    p50_target: 200  # ms
+    p95_target: 1000  # ms
+    p99_target: 3000  # ms
+    measurement_window: 7d
+
+  success_rate:
+    target: 99.5  # 99.5% success rate
+    measurement_window: 7d
+
+# Critical Alerts (Page immediately)
+critical_alerts:
+  payment_success_rate:
+    threshold: 95  # percent
+    duration: 5m
+    severity: critical
+
+  api_error_rate:
+    threshold: 5  # percent
+    duration: 5m
+    severity: critical
+
+  api_latency_p99:
+    threshold: 5000  # ms
+    duration: 10m
+    severity: critical
+
+  service_down:
+    threshold: 0  # no healthy pods
+    duration: 1m
+    severity: critical
+
+  database_connections_exhausted:
+    threshold: 95  # percent of max
+    duration: 2m
+    severity: critical
+
+# Warning Alerts (Notify but don't page)
+warning_alerts:
+  payment_success_rate:
+    threshold: 97  # percent
+    duration: 10m
+    severity: warning
+
+  api_error_rate:
+    threshold: 1  # percent
+    duration: 10m
+    severity: warning
+
+  api_latency_p95:
+    threshold: 1000  # ms
+    duration: 15m
+    severity: warning
+
+  api_latency_p99:
+    threshold: 3000  # ms
+    duration: 15m
+    severity: warning
+
+  cpu_utilization:
+    threshold: 80  # percent
+    duration: 10m
+    severity: warning
+
+  memory_utilization:
+    threshold: 85  # percent
+    duration: 10m
+    severity: warning
+
+  database_connections:
+    threshold: 80  # percent of max
+    duration: 5m
+    severity: warning
+
+# Database Alerts
+database_alerts:
+  slow_queries:
+    threshold: 1000  # ms
+    duration: 5m
+    severity: warning
+
+  connection_pool_utilization:
+    warning: 70  # percent
+    critical: 90  # percent
+
+  replication_lag:
+    warning: 10  # seconds
+    critical: 30  # seconds
+
+  deadlocks:
+    threshold: 5  # count per minute
+    severity: warning
+
+# Cache Alerts
+cache_alerts:
+  hit_rate:
+    warning: 80  # percent
+    critical: 60  # percent
+    duration: 10m
+
+  connection_errors:
+    threshold: 10  # count per minute
+    severity: critical
+
+  memory_utilization:
+    warning: 80  # percent
+    critical: 95  # percent
+
+# External Dependency Alerts
+external_dependency_alerts:
+  stripe_api:
+    timeout_rate:
+      threshold: 5  # percent
+      duration: 5m
+      severity: warning
+    error_rate:
+      threshold: 10  # percent
+      duration: 5m
+      severity: critical
+
+  paypal_api:
+    timeout_rate:
+      threshold: 5  # percent
+      duration: 5m
+      severity: warning
+    error_rate:
+      threshold: 10  # percent
+      duration: 5m
+      severity: critical
+
+# Business Metrics Alerts
+business_metrics:
+  transaction_volume:
+    drop_threshold: 30  # percent decrease
+    duration: 15m
+    severity: warning
+
+  revenue_per_minute:
+    drop_threshold: 50  # percent decrease
+    duration: 10m
+    severity: critical
+
+  failed_payment_count:
+    threshold: 100  # count per minute
+    duration: 5m
+    severity: warning
+
+# Infrastructure Alerts
+infrastructure:
+  pod_restart_rate:
+    threshold: 3  # restarts per hour
+    severity: warning
+
+  pod_crash_loop:
+    threshold: 1  # crash loop detected
+    severity: critical
+
+  disk_usage:
+    warning: 75  # percent
+    critical: 90  # percent
+
+  network_errors:
+    threshold: 100  # errors per minute
+    severity: warning
+
+# Anomaly Detection
+anomaly_detection:
+  enabled: true
+  sensitivity: medium
+  metrics:
+    - payment_success_rate
+    - api_latency_p95
+    - transaction_volume
+    - error_rate
+
+# Alert Routing
+alert_routing:
+  critical:
+    pagerduty: true
+    slack_channel: "#incidents-critical"
+    email: oncall@example.com
+
+  warning:
+    pagerduty: false
+    slack_channel: "#alerts-warnings"
+    email: team@example.com
+
+  info:
+    pagerduty: false
+    slack_channel: "#monitoring"

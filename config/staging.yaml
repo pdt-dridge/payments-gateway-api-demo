@@ -1,0 +1,116 @@
+# Staging Configuration - Payments Gateway API
+# Last Updated: 2026-03-19
+# Environment: Staging
+
+api:
+  name: payments-gateway
+  version: v1.2.3
+  environment: staging
+  port: 8080
+  host: 0.0.0.0
+  base_url: https://api-staging.payments.example.com
+
+  max_request_size: 10MB
+  request_timeout: 30s
+  idle_timeout: 120s
+
+# Payment Providers (Test Mode)
+payment_providers:
+  stripe:
+    enabled: true
+    api_key_secret: stripe-test-api-key
+    api_version: "2023-10-16"
+    endpoint: https://api.stripe.com
+    timeout: 15s
+    retry_attempts: 3
+
+  paypal:
+    enabled: true
+    client_id_secret: paypal-sandbox-client-id
+    client_secret_secret: paypal-sandbox-client-secret
+    endpoint: https://api.sandbox.paypal.com
+    mode: sandbox
+    timeout: 15s
+    retry_attempts: 3
+
+# Database Configuration
+database:
+  host: payments-db.staging.internal
+  port: 5432
+  name: payments_staging
+  user: payments
+  password_secret: db-password-staging
+  ssl_mode: require
+
+  pool:
+    min_connections: 5
+    max_connections: 20
+    max_idle_time: 300s
+    max_lifetime: 3600s
+
+# Cache Configuration
+cache:
+  type: redis
+  host: payments-cache.staging.internal
+  port: 6379
+  password_secret: redis-password-staging
+  db: 0
+  pool_size: 50
+  default_ttl: 300s
+
+# Monitoring
+monitoring:
+  enabled: true
+  metrics:
+    enabled: true
+    port: 9090
+  logging:
+    level: debug  # More verbose in staging
+    format: json
+  tracing:
+    enabled: true
+    sample_rate: 1.0  # 100% sampling in staging
+
+# Alert Thresholds (More lenient)
+alerts:
+  payment_success_rate:
+    warning: 90
+    critical: 85
+  api_latency_p95:
+    warning: 2000
+    critical: 5000
+
+# Security
+security:
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 500
+    burst: 1000
+  cors:
+    enabled: true
+    allowed_origins:
+      - https://dashboard-staging.example.com
+      - http://localhost:3000
+
+# Feature Flags (Test new features)
+features:
+  new_payment_flow: true
+  fraud_detection_v2: true
+  async_webhooks: true
+  payment_retry: true
+  multi_currency: true
+  experimental_features: true
+
+# Resource Limits (Smaller)
+resources:
+  cpu_limit: "1000m"
+  memory_limit: "2Gi"
+  cpu_request: "500m"
+  memory_request: "1Gi"
+
+# Autoscaling
+autoscaling:
+  enabled: true
+  min_replicas: 2
+  max_replicas: 5
+  target_cpu_utilization: 70
