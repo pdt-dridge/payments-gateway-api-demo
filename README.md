@@ -1,4 +1,4 @@
-# Payments Gateway API
+# Payments Gateway API [demo]
 
 A demo payments gateway API for testing PagerDuty workflow integrations and SRE Agent capabilities.
 
